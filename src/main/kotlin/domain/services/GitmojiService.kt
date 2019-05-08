@@ -1,19 +1,19 @@
 package domain.services
 
+import arrow.core.left
 import arrow.data.EitherT
 import arrow.data.Kleisli
+import arrow.data.Nel
+import arrow.effects.IO
+import domain.Gitmoji
 
 object GitmojiService {
-  fun listAllGitmojis(): GitmojiOperation<Sequence<String>> = Kleisli.invoke { repository ->
-    EitherT(
-      repository.all()
-        .map { gitmojisOrError ->
-          gitmojisOrError.map { gitmojis ->
-            gitmojis.map { (emoji, _, code, description, name) ->
-              "%1s %-30s - %-30s | %s".format(emoji, name, code, description)
-            }
-          }
-        }
-    )
+  fun listAllGitmojis(): GitmojiOperation<Sequence<Gitmoji>> = Kleisli { repository ->
+    EitherT(repository.all())
+  }
+
+  fun searchGitmojis(searchWords: List<String>): GitmojiOperation<Sequence<Gitmoji>> = Kleisli { repository ->
+    if (searchWords.isEmpty()) EitherT(IO { Nel("Search words are empty").left() })
+    else EitherT(repository.searchByName(searchWords))
   }
 }

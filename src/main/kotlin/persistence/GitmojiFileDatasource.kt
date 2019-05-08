@@ -11,7 +11,6 @@ import com.google.gson.stream.JsonReader
 import domain.Gitmoji
 import domain.Gitmojis
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.net.URL
 import java.nio.channels.Channels
