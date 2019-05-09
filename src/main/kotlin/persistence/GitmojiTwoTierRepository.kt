@@ -1,6 +1,7 @@
 package persistence
 
 import ErrorOr
+import arrow.core.Option
 import arrow.core.Some
 import arrow.core.left
 import arrow.core.right
@@ -47,18 +48,7 @@ class GitmojiTwoTierRepository(
       }
 
   override fun searchByName(searchWords: List<String>): IO<ErrorOr<Sequence<Gitmoji>>> = fx {
-    if (inMemoryDatasource.isMemoryEmpty()) {
-      val fileOrError = fileDatasource.openGitmojiJsonFile().bind()
-      fileOrError.fold(
-        { fileDatasource.downloadGitmojiJsonFile() },
-        { IO { it.right() } }
-      ).bind()
-      val parseOrError = fileDatasource.parseGitmojiJsonFile().bind()
-      parseOrError.fold(
-        { return@fx Nel("Error parsing json file").left() },
-        { inMemoryDatasource.loadGitmojis(it).bind() }
-      )
-    }
+    if (inMemoryDatasource.isMemoryEmpty()) populateData().bind()
 
     val searchResult = searchWords
       .map { inMemoryDatasource.searchByName(it) }
@@ -68,5 +58,27 @@ class GitmojiTwoTierRepository(
 
     if (searchResult.isEmpty()) Nel("Search results are empty").left()
     else searchResult.right()
+  }
+
+  override fun findByName(name: String): IO<ErrorOr<Option<Gitmoji>>> = fx {
+    if (inMemoryDatasource.isMemoryEmpty()) populateData().bind()
+
+    val gitmoji = inMemoryDatasource.searchByName(name).bind()
+
+    gitmoji.right()
+  }
+
+  private fun populateData(): IO<Unit> = fx {
+    val fileOrError = fileDatasource.openGitmojiJsonFile().bind()
+    fileOrError.fold(
+      { fileDatasource.downloadGitmojiJsonFile() },
+      { IO { it.right() } }
+    ).bind()
+    val parseOrError = fileDatasource.parseGitmojiJsonFile().bind()
+    parseOrError.fold(
+      { Nel("Error parsing json file").left() },
+      { inMemoryDatasource.loadGitmojis(it).bind() }
+    )
+    Unit
   }
 }
