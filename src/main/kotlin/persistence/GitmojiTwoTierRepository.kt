@@ -1,11 +1,10 @@
 package persistence
 
-import ErrorOr
+import domain.ErrorOr
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.left
 import arrow.core.right
-import arrow.data.Nel
 import arrow.data.extensions.list.traverse.sequence
 import arrow.data.extensions.sequence.foldable.isEmpty
 import arrow.data.fix

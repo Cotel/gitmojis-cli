@@ -1,6 +1,6 @@
 package persistence
 
-import ErrorOr
+import domain.ErrorOr
 import arrow.core.Option
 import arrow.core.left
 import arrow.core.right
