@@ -8,6 +8,7 @@ import presentation.CLICommand
 import presentation.CLICommand.Companion.parseCLICommand
 import presentation.commitWizard
 import presentation.allGitmojis
+import presentation.hookWizard
 import presentation.showHelpText
 import presentation.searchGitmojis
 
@@ -22,9 +23,10 @@ fun main(args: Array<String>) {
     CLICommand.ListGitmojis -> allGitmojis(gitmojiRepository)
     CLICommand.ShowHelp -> showHelpText()
     CLICommand.CommitWizard -> commitWizard(gitmojiRepository)
+    is CLICommand.HookWizard -> hookWizard(cliCommand.filePath, gitmojiRepository)
     is CLICommand.SearchGitmojis -> searchGitmojis(cliCommand.searchWords, gitmojiRepository)
-    CLICommand.UnknownCommand -> {
-      consoleRender("Unrecognized command")
+    is CLICommand.UnknownCommand -> {
+      consoleRender("Unrecognized command: ${cliCommand.command}")
       showHelpText()
     }
   }
