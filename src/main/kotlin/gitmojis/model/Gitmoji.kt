@@ -1,4 +1,4 @@
-package domain
+package gitmojis.model
 
 typealias Emoji = String
 

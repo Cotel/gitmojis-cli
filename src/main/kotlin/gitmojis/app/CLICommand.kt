@@ -1,4 +1,4 @@
-package presentation
+package gitmojis.app
 
 sealed class CLICommand {
   object ListGitmojis : CLICommand()

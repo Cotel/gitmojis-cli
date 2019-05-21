@@ -1,6 +1,6 @@
-package persistence
+package gitmojis.app.interpreters.repository
 
-import domain.ErrorOr
+import base.ErrorOr
 import arrow.core.Try
 import arrow.core.left
 import arrow.core.right
@@ -8,8 +8,8 @@ import arrow.data.NonEmptyList
 import arrow.effects.IO
 import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
-import domain.Gitmoji
-import domain.Gitmojis
+import gitmojis.model.Gitmoji
+import gitmojis.model.Gitmojis
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL

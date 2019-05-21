@@ -1,7 +1,7 @@
-package presentation
+package gitmojis.app
 
 import arrow.typeclasses.Show
-import domain.Gitmoji
+import gitmojis.model.Gitmoji
 
 val GitmojiShowConsoleInstance = object : Show<Gitmoji> {
   override fun Gitmoji.show(): String =

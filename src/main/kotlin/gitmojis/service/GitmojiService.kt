@@ -1,4 +1,4 @@
-package domain.services
+package gitmojis.service
 
 import arrow.core.Option
 import arrow.core.left
@@ -6,7 +6,7 @@ import arrow.data.EitherT
 import arrow.data.Kleisli
 import arrow.data.Nel
 import arrow.effects.IO
-import domain.Gitmoji
+import gitmojis.model.Gitmoji
 
 object GitmojiService {
   fun listAllGitmojis(): GitmojiOperation<Sequence<Gitmoji>> = Kleisli { repository ->

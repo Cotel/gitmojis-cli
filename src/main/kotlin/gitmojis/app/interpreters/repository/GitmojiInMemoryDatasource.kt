@@ -1,13 +1,13 @@
-package persistence
+package gitmojis.app.interpreters.repository
 
-import domain.ErrorOr
+import base.ErrorOr
 import arrow.core.Option
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
 import arrow.data.NonEmptyList
 import arrow.effects.IO
-import domain.Gitmoji
+import gitmojis.model.Gitmoji
 
 class GitmojiInMemoryDatasource {
   private var memoryMap: Map<String, Gitmoji> = emptyMap()

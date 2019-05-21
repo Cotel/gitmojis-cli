@@ -1,6 +1,6 @@
-package persistence
+package gitmojis.app.interpreters.repository
 
-import domain.ErrorOr
+import base.ErrorOr
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.left
@@ -14,8 +14,8 @@ import arrow.effects.extensions.io.applicative.applicative
 import arrow.effects.extensions.io.fx.fx
 import arrow.effects.extensions.io.monad.effectM
 import arrow.effects.fix
-import domain.Gitmoji
-import domain.GitmojiRepository
+import gitmojis.model.Gitmoji
+import gitmojis.repository.GitmojiRepository
 
 class GitmojiTwoTierRepository(
   private val fileDatasource: GitmojiFileDatasource,

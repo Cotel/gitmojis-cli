@@ -1,16 +1,17 @@
-package presentation
+package gitmojis.app
 
 import arrow.data.fix
 import arrow.data.value
 import arrow.effects.fix
 import consoleRender
-import domain.GitmojiRepository
-import domain.services.GitmojiOperationMonad
+import gitmojis.repository.GitmojiRepository
+import gitmojis.service.GitmojiOperationMonad
+import gitmojis.service.GitmojiService
 
-fun allGitmojis(gitmojiRepository: GitmojiRepository) {
+fun searchGitmojis(searchWords: List<String>, gitmojiRepository: GitmojiRepository) {
   val gitmojis = GitmojiOperationMonad.binding {
     with(GitmojiShowConsoleInstance) {
-      domain.services.GitmojiService.listAllGitmojis().bind().map { it.show() }
+      GitmojiService.searchGitmojis(searchWords).bind().map { it.show() }
     }
   }.fix()
 

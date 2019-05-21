@@ -1,4 +1,4 @@
-package presentation
+package gitmojis.app
 
 import consoleRender
 import consoleRenderBlankLine

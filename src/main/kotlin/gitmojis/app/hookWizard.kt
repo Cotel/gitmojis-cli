@@ -1,10 +1,10 @@
-package presentation
+package gitmojis.app
 
 import arrow.data.run
 import arrow.data.value
 import arrow.effects.fix
 import consoleRender
-import domain.GitmojiRepository
+import gitmojis.repository.GitmojiRepository
 import java.io.File
 
 fun hookWizard(filePath: String, gitmojiRepository: GitmojiRepository) {

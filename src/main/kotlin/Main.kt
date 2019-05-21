@@ -1,21 +1,22 @@
 import jline.TerminalFactory
 import org.fusesource.jansi.Ansi.ansi
 import org.fusesource.jansi.AnsiConsole
-import persistence.GitmojiFileDatasource
-import persistence.GitmojiInMemoryDatasource
-import persistence.GitmojiTwoTierRepository
-import presentation.CLICommand
-import presentation.CLICommand.Companion.parseCLICommand
-import presentation.commitWizard
-import presentation.allGitmojis
-import presentation.hookWizard
-import presentation.showHelpText
-import presentation.searchGitmojis
+import gitmojis.app.interpreters.repository.GitmojiFileDatasource
+import gitmojis.app.interpreters.repository.GitmojiInMemoryDatasource
+import gitmojis.app.interpreters.repository.GitmojiTwoTierRepository
+import gitmojis.app.CLICommand
+import gitmojis.app.CLICommand.Companion.parseCLICommand
+import gitmojis.app.commitWizard
+import gitmojis.app.allGitmojis
+import gitmojis.app.hookWizard
+import gitmojis.app.showHelpText
+import gitmojis.app.searchGitmojis
 
 fun main(args: Array<String>) {
   val inMemoryDatasource = GitmojiInMemoryDatasource()
   val fileDatasource = GitmojiFileDatasource()
-  val gitmojiRepository = GitmojiTwoTierRepository(fileDatasource, inMemoryDatasource)
+  val gitmojiRepository =
+    GitmojiTwoTierRepository(fileDatasource, inMemoryDatasource)
 
   AnsiConsole.systemInstall()
 

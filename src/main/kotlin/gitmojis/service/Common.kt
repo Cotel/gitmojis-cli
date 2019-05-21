@@ -1,4 +1,4 @@
-package domain.services
+package gitmojis.service
 
 import arrow.data.EitherT
 import arrow.data.EitherTPartialOf
@@ -10,7 +10,7 @@ import arrow.data.extensions.kleisli.monad.monad
 import arrow.effects.ForIO
 import arrow.effects.IO
 import arrow.effects.extensions.io.monad.monad
-import domain.GitmojiRepository
+import gitmojis.repository.GitmojiRepository
 
 val GitmojiOperationMonad = ReaderT.monad<EitherTPartialOf<ForIO, Nel<String>>, GitmojiRepository>(
   EitherT.monad(IO.monad())
