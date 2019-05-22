@@ -5,6 +5,9 @@ import arrow.data.run
 import arrow.data.value
 import arrow.effects.fix
 import consoleRender
+import consoleRenderList
+import gitmojis.model.GitmojiErrors
+import gitmojis.model.show
 import gitmojis.repository.GitmojiRepository
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -14,7 +17,7 @@ fun commitWizard(gitmojiRepository: GitmojiRepository) {
     .value().fix()
     .unsafeRunSync()
     .fold(
-      { it.all.forEach(::consoleRender) },
+      { consoleRenderList(it.all, GitmojiErrors.show()) },
       {
         it.fold(
           { consoleRender("An error ocured while cooking your commit message") },

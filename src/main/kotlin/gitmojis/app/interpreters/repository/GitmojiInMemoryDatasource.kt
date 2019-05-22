@@ -8,6 +8,7 @@ import arrow.core.toOption
 import arrow.data.NonEmptyList
 import arrow.effects.IO
 import gitmojis.model.Gitmoji
+import gitmojis.model.PersistenceError
 
 class GitmojiInMemoryDatasource {
   private var memoryMap: Map<String, Gitmoji> = emptyMap()
@@ -24,7 +25,7 @@ class GitmojiInMemoryDatasource {
   }
 
   fun all(): IO<ErrorOr<Sequence<Gitmoji>>> = IO {
-    if (isMemoryEmpty()) NonEmptyList("Memory is empty").left()
+    if (isMemoryEmpty()) NonEmptyList(PersistenceError("Memory is empty")).left()
     else memoryMap.values.asSequence().right()
   }
 

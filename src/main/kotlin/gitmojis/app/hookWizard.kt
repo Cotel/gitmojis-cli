@@ -4,6 +4,9 @@ import arrow.data.run
 import arrow.data.value
 import arrow.effects.fix
 import consoleRender
+import consoleRenderList
+import gitmojis.model.GitmojiErrors
+import gitmojis.model.show
 import gitmojis.repository.GitmojiRepository
 import java.io.File
 
@@ -13,7 +16,7 @@ fun hookWizard(filePath: String, gitmojiRepository: GitmojiRepository) {
     .unsafeRunSync()
     .fold(
       {
-        it.all.forEach(::consoleRender)
+        consoleRenderList(it.all, GitmojiErrors.show())
         System.exit(1)
       },
       {

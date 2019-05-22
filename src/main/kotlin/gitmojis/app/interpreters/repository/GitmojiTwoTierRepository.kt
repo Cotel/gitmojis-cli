@@ -1,53 +1,38 @@
 package gitmojis.app.interpreters.repository
 
-import base.ErrorOr
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.left
 import arrow.core.right
 import arrow.data.Nel
 import arrow.data.extensions.list.traverse.sequence
-import arrow.data.extensions.sequence.foldable.isEmpty
 import arrow.data.fix
 import arrow.effects.IO
 import arrow.effects.extensions.io.applicative.applicative
 import arrow.effects.extensions.io.fx.fx
 import arrow.effects.extensions.io.monad.effectM
 import arrow.effects.fix
+import arrow.effects.handleErrorWith
+import base.BIO
+import base.ErrorOr
 import gitmojis.model.Gitmoji
 import gitmojis.repository.GitmojiRepository
 
-class GitmojiTwoTierRepository(
-  private val fileDatasource: GitmojiFileDatasource,
-  private val inMemoryDatasource: GitmojiInMemoryDatasource
-) : GitmojiRepository {
-  override fun all(): IO<ErrorOr<Sequence<Gitmoji>>> =
+interface GitmojiTwoTierRepository : GitmojiRepository {
+
+  val fileDatasource: GitmojiFileDatasource
+  val inMemoryDatasource: GitmojiInMemoryDatasource
+
+  override fun all(): BIO<Sequence<Gitmoji>> =
     inMemoryDatasource.all()
-      .flatMap { memoryGitmojisOrError ->
-        memoryGitmojisOrError.fold(
-          { memoryErrors ->
-            fileDatasource
-              .openGitmojiJsonFile()
-              .flatMap { fileOrError ->
-                fileOrError.fold(
-                  { fileDatasource.downloadGitmojiJsonFile() },
-                  { IO { it.right() } }
-                )
-              }
-              .flatMap { fileDatasource.parseGitmojiJsonFile() }
-              .effectM { IO { it.map { inMemoryDatasource.loadGitmojis(it) } } }
-              .flatMap { fileGitmojisOrError ->
-                fileGitmojisOrError.fold(
-                  { fileErrors -> IO { (memoryErrors + fileErrors).left() } },
-                  { IO { it.right() } }
-                )
-              }
-          },
-          { IO { it.right() } }
-        )
+      .handleErrorWith {
+        fileDatasource.openGitmojiJsonFile()
+          .handleErrorWith { fileDatasource.downloadGitmojiJsonFile() }
+          .flatMap { fileDatasource.parseGitmojiJsonFile() }
+          .effectM { IO { it.map { inMemoryDatasource.loadGitmojis(it) } } }
       }
 
-  override fun searchByName(searchWords: List<String>): IO<ErrorOr<Sequence<Gitmoji>>> = fx {
+  override fun searchByName(searchWords: List<String>): BIO<Sequence<Gitmoji>> = fx {
     if (inMemoryDatasource.isMemoryEmpty()) populateData().bind()
 
     val searchResult = searchWords
@@ -56,11 +41,10 @@ class GitmojiTwoTierRepository(
       .map { searchResults -> searchResults.asSequence().filter { it.isDefined() }.map { (it as Some).t } }
       .bind()
 
-    if (searchResult.isEmpty()) Nel("Search results are empty").left()
-    else searchResult.right()
+    searchResult.right()
   }
 
-  override fun findByName(name: String): IO<ErrorOr<Option<Gitmoji>>> = fx {
+  override fun findOneByName(name: String): IO<ErrorOr<Option<Gitmoji>>> = fx {
     if (inMemoryDatasource.isMemoryEmpty()) populateData().bind()
 
     val gitmoji = inMemoryDatasource.searchByName(name).bind()
@@ -80,5 +64,13 @@ class GitmojiTwoTierRepository(
       { inMemoryDatasource.loadGitmojis(it).bind() }
     )
     Unit
+  }
+
+  companion object : GitmojiTwoTierRepository {
+    override val fileDatasource: GitmojiFileDatasource =
+      GitmojiFileDatasource()
+
+    override val inMemoryDatasource: GitmojiInMemoryDatasource =
+      GitmojiInMemoryDatasource()
   }
 }

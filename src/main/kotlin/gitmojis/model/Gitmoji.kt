@@ -8,6 +8,6 @@ data class Gitmoji(
   val code: String,
   val description: String,
   val name: String
-)
+) { companion object }
 
 data class Gitmojis(val gitmojis: List<Gitmoji>)

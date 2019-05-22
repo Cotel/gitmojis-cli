@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.google.gson.stream.JsonReader
 import gitmojis.model.Gitmoji
 import gitmojis.model.Gitmojis
+import gitmojis.model.PersistenceError
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -35,11 +36,9 @@ class GitmojiFileDatasource {
   }.flatMap { openGitmojiJsonFile() }
 
   fun openGitmojiJsonFile(): IO<ErrorOr<File>> = IO {
-    Try {
-      File(FILE_NAME)
-    }.fold(
-      { NonEmptyList("File couldn't be opened").left() },
-      { if (it.exists()) it.right() else NonEmptyList("File couldn't be opened").left() }
+    Try { File(FILE_NAME) }.fold(
+      { NonEmptyList(PersistenceError("File couldn't be opened")).left() },
+      { if (it.exists()) it.right() else NonEmptyList(PersistenceError("File couldn't be opened")).left() }
     )
   }
 
